@@ -2,6 +2,7 @@ import json
 from flask import Blueprint, request, jsonify
 from app.models import User
 from app.db import get_db
+import sys
 
 bp = Blueprint('api', __name__, url_prefix='/api')
 
@@ -22,6 +23,10 @@ def signup():
         db.commit()
     except:
         # insert failed, so send error to frontend
+        print(sys.exc_info()[0])
+        
+        # insert failed, so rollback and send error to frontend 
+        db.rollback()
         return jsonify(message = 'Signup failed'), 500
 
     return jsonify(id = newUser.id)
